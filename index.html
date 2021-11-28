@@ -3,21 +3,25 @@
 </head>
 <body>
 <h1>rdf<span style="font-size:xxx-large">T</span>able <span style="font-size:large;color:navy">[<a href="https://github.com/episphere/rdfTable" target="_blank">code</a>]</span></h1>
-<p>
-Assembling RDF content from SOCRATA data platform as a linked table.
-You can provide the URL to the remote data as a link appended 
+<hr><p style="color:maroon">
+Assembling RDF content from SOCRATA data platform as a <b>FAIR linked table</b>.
+Provide the URL of the remote data as a link appended 
 to the url of this page, as in <a href="?https://data.cdc.gov/resource/muzy-jte6.rdf?$limit=10&mmwryear=2021">this demo</a>,
-retrieving the first 10 weeks of mortality data in 2021 from CDC. 
-The URL can also be provided below.
+which will retrieve the first 10 weeks of mortality data in 2021 from <a href="https://data.cdc.gov" target="_blank">CDC</a>. 
+The URL can also be provided manualy below.
 </p>
 <p>
-URL: <input id=inputURL type=text size=40> <button>tabulate</button>
+URL: <input id=inputURL type=text size=60> <button id="tablulateURL">tabulate</button>
 </p>
-<div id="rdfTable">...</div>
+<div id="rdfTableDiv">...</div>
 <script src="rdfTable.js"></script>
 <script>
     if(location.search.length>1){
         document.getElementById('inputURL').value=location.search.slice(1)
+    }
+    document.getElementById('tablulateURL').onclick=function(){
+        console.log(Date())
+        location.search=document.getElementById('inputURL').value
     }
 
 </script>

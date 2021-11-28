@@ -1,7 +1,7 @@
 console.log(`loading rdfTable.js at ${Date()}`)
 
 rdfTable=function(){ //
-    rdfTable.div=document.getElementById('rdfTable')
+    rdfTable.div=document.getElementById('rdfTableDiv')
     if(rdfTable.div){
         rdfTable.ui(rdfTable.div)
     }
@@ -20,6 +20,8 @@ rdfTable.ui = async function(div=rdfTable.div){ // assemble UI
         await rdfTable.readRDF()
         console.log(`json extracted from ${rdfTable.url}:`,rdfTable.json)
     }
+    // tabulate
+    rdfTable.tabulate()
 }
 
 rdfTable.readRDF = async (url=document.location.search.slice(1))=>{
@@ -71,7 +73,6 @@ rdfTable.rdf2json = txt =>{ // rdf as txt
                 L[2]=L[2].replace(/\/$/,'')
                 rdf.rows[rowID][L[1]]=rdf.rows[rowID][L[1]]||[]
                 rdf.rows[rowID][L[1]].push(L[2])
-                
             }
             //debugger
         }
@@ -80,7 +81,52 @@ rdfTable.rdf2json = txt =>{ // rdf as txt
     return rdf
 }
 
-
+rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
+    if(typeof(div)=="string"){
+        div=document.getElementById(div)
+    }
+    rdfTable.rows = Object.entries(rdfTable.json.rows).map(x=>x[0])
+    rdfTable.cols = Object.entries(rdfTable.json.rows[Object.entries(rdfTable.json.rows)[0][0]]).map(x=>x[0])
+    // remove hidden cols
+    rdfTable.cols=rdfTable.cols.filter(x=>x.match(':')) // only linked
+    rdfTable.cols=rdfTable.cols.filter(x=>x!="rdfs:member")
+    let h = `<hr><p style="font-size:small">${Date()}</p>`
+    h += `<p>Compare conventional <a href="${rdfTable.url.replace('.rdf','.csv')}" target="_blank">CSV data</a> from the same source with the linked table assembled below from <a href="${rdfTable.url}" target="_blank">RDF data</a>. Note location of each of the namespaces at the end.</p>`
+    h += `<p style="font-size:small"><b>URL</b>: <a href="${rdfTable.url}" target="_blank">${rdfTable.url}</a></p>`
+    h += '<table style="font-size:small">'
+    // header
+    h += '<tr>'
+    rdfTable.cols.forEach(c=>{
+        c = c.match(/[^:]+$/)[0]
+        let cc = c
+        if(cc=='rowID'){cc='*'}
+        let u = location.origin+location.pathname
+        h += `<th><a href="${u+'?'+rdfTable.url.replace(/[&$]*select=[^&]*/g,'')}&$select=${cc}">${c}</a></th>`
+    })
+    h += '</tr>'
+    // list rows
+    rdfTable.rows.forEach(r=>{
+        h += '<tr>'
+        rdfTable.cols.forEach(c=>{
+            let rc = rdfTable.json.rows[r][c]
+            let cc = c.match(/:([^:]+)$/)[1]
+            if(cc=="rowID"){
+                //h +=`<td><a href="${r+'.json'}" target="_blank" style="color:maroon">[json]</a>: <a href="${r+'.json'}" target="_blank">${rc}</a></td>`
+                h +=`<td><a href="${r+'.json?$$exclude_system_fields=false'}" target="_blank">${rc}</a></td>`
+            }else{
+                h +=`<td>${rc}</td>`
+            }
+        })
+        h += '</tr>'
+    })
+    h += '</table><hr>'
+    // prefixes
+    let nm = Object.entries(rdfTable.json.xmlns).map(x=>x[0])
+    nm.forEach(n=>{
+        h += `<li id="xmlns_${n}" style="font-size:small"><b>${n}</b>: ${rdfTable.json.xmlns[n]}</li>`
+    })
+    div.innerHTML=h
+}
 
 
 
