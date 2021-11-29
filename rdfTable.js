@@ -2,7 +2,7 @@ console.log(`loading rdfTable.js at ${Date()}`)
 
 rdfTable=function(){ //
     rdfTable.div=document.getElementById('rdfTableDiv')
-    if(rdfTable.div){
+    if(rdfTable.div&&location.search.length>1){
         rdfTable.ui(rdfTable.div)
     }
 }
