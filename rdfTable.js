@@ -91,30 +91,32 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
     rdfTable.cols=rdfTable.cols.filter(x=>x.match(':')) // only linked
     rdfTable.cols=rdfTable.cols.filter(x=>x!="rdfs:member")
     let h = `<hr><p style="font-size:small">${Date()}</p>`
-    h += `<p>Compare conventional <a href="${rdfTable.url.replace('.rdf','.csv')}" target="_blank">CSV data</a> from the same source with the linked table assembled below from <a href="${rdfTable.url}" target="_blank">RDF data</a>. Note location of each of the namespaces at the end.</p>`
+    h += `<p>Compare conventional <a href="${rdfTable.url.replace('.rdf','.csv')}" target="_blank">CSV data</a> from the same source with the linked table assembled below from <a href="${rdfTable.url}" target="_blank">RDF data</a>. Note base address of mapped namespaces at the end.</p>`
     h += `<p style="font-size:small"><b>URL</b>: <a href="${rdfTable.url}" target="_blank">${rdfTable.url}</a></p>`
-    h += '<table style="font-size:small">'
+    h += '<table style="font-size:small;background-color:silver">'
     // header
     h += '<tr>'
     rdfTable.cols.forEach(c=>{
         c = c.match(/[^:]+$/)[0]
         let cc = c
-        if(cc=='rowID'){cc='*'}
         let u = location.origin+location.pathname
+        if(cc=='rowID'){cc='*'}
         h += `<th><a href="${u+'?'+rdfTable.url.replace(/[&$]*select=[^&]*/g,'')}&$select=${cc}">${c}</a></th>`
     })
     h += '</tr>'
     // list rows
     rdfTable.rows.forEach(r=>{
         h += '<tr>'
+        let rClass = r.match(/[\w]+$/)[0]
         rdfTable.cols.forEach(c=>{
+            let cClass = c.match(/[\w]+$/)[0]
             let rc = rdfTable.json.rows[r][c]
             let cc = c.match(/:([^:]+)$/)[1]
             if(cc=="rowID"){
                 //h +=`<td><a href="${r+'.json'}" target="_blank" style="color:maroon">[json]</a>: <a href="${r+'.json'}" target="_blank">${rc}</a></td>`
                 h +=`<td><a href="${r+'.json?$$exclude_system_fields=false'}" target="_blank">${rc}</a></td>`
             }else{
-                h +=`<td>${rc}</td>`
+                h +=`<td class="${rClass} ${cClass}">${rc}</td>`
             }
         })
         h += '</tr>'
