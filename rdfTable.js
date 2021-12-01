@@ -137,18 +137,22 @@ rdfTable.hoverCSVdata=async function(that){
     if(!that.data){
         that.data = await (await fetch(that.href)).text()
     }
-    rdfTable.msg(('CSV data:\r---------\r'+that.data).replace('\n','\r'))
+    rdfTable.msg(('CSV data:\r----------\r'+that.data).replace('\n','\r'))
 }
 
 rdfTable.hoverRDFdata=async function(that){
     if(!that.data){
         that.data = await (await fetch(that.href)).text()
     }
-    rdfTable.msg(('RDF data:\r---------\r'+that.data).replace('\n','\r'))
+    rdfTable.msg(('RDF data:\r----------\r'+that.data).replace('\n','\r'))
 }
 
 rdfTable.msg=function(msg){
     let ta = document.getElementById('msgArea')
+    ta.style.backgroundColor='black'
+    ta.style.color='lime'
+    ta.style.height='33em'
+    ta.style.fontSize='xx-small'
     ta.value=msg
     document.getElementById('msgArea').style.width=`${document.getElementById('valueTable').parentElement.offsetWidth-document.getElementById('prefixList').offsetWidth}px`
 }
