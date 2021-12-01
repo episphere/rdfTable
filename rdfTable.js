@@ -91,9 +91,10 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
     rdfTable.cols=rdfTable.cols.filter(x=>x.match(':')) // only linked
     rdfTable.cols=rdfTable.cols.filter(x=>x!="rdfs:member")
     let h = `<hr><p style="font-size:small">${Date()}</p>`
-    h += `<p>Compare conventional <a href="${rdfTable.url.replace('.rdf','.csv')}" target="_blank">CSV data</a> from the same source with the linked table assembled below from <a href="${rdfTable.url}" target="_blank">RDF data</a>. Note base address of mapped namespaces at the end.</p>`
+    h += `<p>Compare conventional <a id="csvData" href="${rdfTable.url.replace('.rdf','.csv')}" target="_blank" onmouseover="rdfTable.hoverCSVdata(this)">CSV data</a> from the same source with the linked table assembled below (shaded area) from the corresponding <a href="${rdfTable.url}" target="_blank" onmouseover="rdfTable.hoverRDFdata(this)">RDF data</a>. Note base address of mapped namespaces at the end.</p>`
     h += `<p style="font-size:small"><b>URL</b>: <a href="${rdfTable.url}" target="_blank">${rdfTable.url}</a></p>`
-    h += '<table style="font-size:small;background-color:silver">'
+    h += '<div style="overflow-x:auto;overflow-y:auto;max-height:400px">'
+    h += '<table style="font-size:small;background-color:azure" id="valueTable">'
     // header
     h += '<tr>'
     rdfTable.cols.forEach(c=>{
@@ -121,15 +122,35 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
         })
         h += '</tr>'
     })
-    h += '</table><hr>'
+    h += '</table></div><hr>'
     // prefixes
+    h += '<table style="max-width:25em"><tr><td style="vertical-align:top" id="prefixList">'
     let nm = Object.entries(rdfTable.json.xmlns).map(x=>x[0])
     nm.forEach(n=>{
-        h += `<li id="xmlns_${n}" style="font-size:small"><b>${n}</b>: ${rdfTable.json.xmlns[n]}</li>`
+        h += `<li id="xmlns_${n}" style="font-size:small;color:black"><b>${n}</b>: ${rdfTable.json.xmlns[n]}</li>`
     })
+    h += '</td><td style="vertical-align:top"><textarea id="msgArea" style="font-size:small;color:navy;height:22em;width:30em">populate with mouse over value.</textarea></td></tr></table>'
     div.innerHTML=h
 }
 
+rdfTable.hoverCSVdata=async function(that){
+    if(!that.data){
+        that.data = await (await fetch(that.href)).text()
+    }
+    rdfTable.msg(('CSV data:\r---------\r'+that.data).replace('\n','\r'))
+}
 
+rdfTable.hoverRDFdata=async function(that){
+    if(!that.data){
+        that.data = await (await fetch(that.href)).text()
+    }
+    rdfTable.msg(('RDF data:\r---------\r'+that.data).replace('\n','\r'))
+}
+
+rdfTable.msg=function(msg){
+    let ta = document.getElementById('msgArea')
+    ta.value=msg
+    document.getElementById('msgArea').style.width=`${document.getElementById('valueTable').parentElement.offsetWidth-document.getElementById('prefixList').offsetWidth}px`
+}
 
 rdfTable()
