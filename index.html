@@ -6,20 +6,36 @@
 <body class="container">
 <h1>rdf<span style="font-size:xxx-large">T</span>able <span style="font-size:large;color:navy">[<a href="https://github.com/episphere/rdfTable" target="_blank">code</a>]</span></h1>
 <hr><p style="color:maroon">
-Assembling RDF content from SOCRATA data platform as a <b>FAIR linked table</b>.
+Assembling RDF content from <a href="https://dev.socrata.com" target="_blank">SOCRATA</a> data platform as a <b>FAIR linked table</b>.
 Please provide the URL of the remote data as a link appended 
 to the url of this page, as in <a href="?https://data.cdc.gov/resource/muzy-jte6.rdf?$limit=10&mmwryear=2021">this demo</a>,
 which will retrieve the first 10 weeks of mortality data in 2021 from <a href="https://data.cdc.gov" target="_blank">CDC</a>. 
 The URL can also be provided manualy below.
 </p>
-<p>
-URL: <input id=inputURL type=text size=63> <button id="tablulateURL">tabulate</button>
+<p id="resourceInfo"></p>
+<p id="URLbuttons">
+URL: <input id=inputURL type=text size=63> <button id="tablulateURL">tabulate</button> <span id="hideShowSource" hidden="true"> <button id="openSource">open source</button></span>
 </p>
 <div id="rdfTableDiv">...</div>
 <script src="rdfTable.js"></script>
 <script>
     if(location.search.length>1){
         document.getElementById('inputURL').value=location.search.slice(1)
+        document.getElementById('hideShowSource').hidden=false
+        let resourceURL = document.getElementById('inputURL').value.match(/^[^?]+/)[0].replace(/\.rdf$/,'')
+        let resourceID = resourceURL.match(/[^\/]+$/)[0]
+        document.getElementById('openSource').onclick=()=>{window.open(resourceURL)}
+        let url=`https://data.cdc.gov/api/views/${resourceID}.json`
+        fetch(url).then(x=>x.json()
+            .then(x=>{
+                rdfTable.info=x
+                document.getElementById('resourceInfo').innerHTML=`<a href="${url}" target="_blank" id="resourceTitle">${rdfTable.info.name}</a><br><i style="font-size:small;color:navy">${rdfTable.info.description}</i>`
+                document.getElementById('resourceTitle').onmouseover=x=>{
+                    //rdfTable.msg(JSON.stringify(rdfTable.info,null,3))
+                    rdfTable.msg(`resource summary & metadata:\r${url}\r---------------------------------\r${JSON.stringify(rdfTable.info,null,3)}`)
+                }
+            })
+        )
     }
     document.getElementById('tablulateURL').onclick=function(){
         console.log(Date())

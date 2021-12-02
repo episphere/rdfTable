@@ -101,8 +101,13 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
         c = c.match(/[^:]+$/)[0]
         let cc = c
         let u = location.origin+location.pathname
-        if(cc=='rowID'){cc='*'}
-        h += `<th><a href="${u+'?'+rdfTable.url.replace(/[&$]*select=[^&]*/g,'')}&$select=${cc}">${c}</a></th>`
+        if(cc=='rowID'){
+            cc='*'
+            h += `<th><a onmouseover="rdfTable.msgJSON()" href="${u+'?'+rdfTable.url.replace(/[&$]*select=[^&]*/g,'')}&$select=${cc}">${c}</a></th>`
+        }else{
+            h += `<th><a href="${u+'?'+rdfTable.url.replace(/[&$]*select=[^&]*/g,'')}&$select=${cc}">${c}</a></th>`
+        }
+        
     })
     h += '</tr>'
     // list rows
@@ -137,14 +142,14 @@ rdfTable.hoverCSVdata=async function(that){
     if(!that.data){
         that.data = await (await fetch(that.href)).text()
     }
-    rdfTable.msg(('CSV data:\r----------\r'+that.data).replace('\n','\r'))
+    rdfTable.msg((`CSV data:\r${that.href}:\r------------------------------------------------------\r`+that.data).replace('\n','\r'))
 }
 
 rdfTable.hoverRDFdata = async function(that){
     if(!that.data){
         that.data = await (await fetch(that.href)).text()
     }
-    rdfTable.msg(('RDF data:\r----------\r'+that.data).replace('\n','\r'))
+    rdfTable.msg((`RDF data:\r${that.href}:\r------------------------------------------------------\r`+that.data).replace('\n','\r'))
 }
 
 rdfTable.hoverRow = async function(that){
@@ -162,6 +167,19 @@ rdfTable.msg=function(msg,fontsize='x-small'){
     ta.style.fontSize=fontsize
     ta.value=msg
     document.getElementById('msgArea').style.width=`${document.getElementById('valueTable').parentElement.offsetWidth-document.getElementById('prefixList').offsetWidth}px`
+}
+
+rdfTable.msgJSON=()=>{
+    let J={}
+    Object.assign(J,rdfTable.json) 
+    if(J.rows.length==0){
+        let R={}
+        Object.entries(rdfTable.json.rows).forEach(x=>{
+            R[x[0]]=x[1]
+        })
+        J.rows=R
+    }
+    rdfTable.msg(`JSON table assembled from RDF:\r----------------------------------------\r${JSON.stringify(J,null,3)}`)
 }
 
 rdfTable()
