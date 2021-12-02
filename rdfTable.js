@@ -115,7 +115,7 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
             let cc = c.match(/:([^:]+)$/)[1]
             if(cc=="rowID"){
                 //h +=`<td><a href="${r+'.json'}" target="_blank" style="color:maroon">[json]</a>: <a href="${r+'.json'}" target="_blank">${rc}</a></td>`
-                h +=`<td><a href="${r+'.json?$$exclude_system_fields=false'}" target="_blank">${rc}</a></td>`
+                h +=`<td><a href="${r+'.json?$$exclude_system_fields=false'}" target="_blank" onmouseover="rdfTable.hoverRow(this)">${rc}</a></td>`
             }else{
                 h +=`<td class="${rClass} ${cClass}">${rc}</td>`
             }
@@ -124,12 +124,12 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
     })
     h += '</table></div><hr>'
     // prefixes
-    h += '<table style="max-width:25em"><tr><td style="vertical-align:top" id="prefixList">'
+    h += '<table style="max-width:50em"><tr><td style="vertical-align:top" id="prefixList">'
     let nm = Object.entries(rdfTable.json.xmlns).map(x=>x[0])
     nm.forEach(n=>{
         h += `<li id="xmlns_${n}" style="font-size:small;color:black"><b>${n}</b>: ${rdfTable.json.xmlns[n]}</li>`
     })
-    h += '</td><td style="vertical-align:top"><textarea id="msgArea" style="font-size:small;color:navy;height:22em;width:30em">populate with mouse over value.</textarea></td></tr></table>'
+    h += '</td><td style="vertical-align:top"><textarea id="msgArea" style="font-size:small;color:navy;height:22em;width:28em">populate with mouse over value.</textarea></td></tr></table><hr>'
     div.innerHTML=h
 }
 
@@ -140,19 +140,26 @@ rdfTable.hoverCSVdata=async function(that){
     rdfTable.msg(('CSV data:\r----------\r'+that.data).replace('\n','\r'))
 }
 
-rdfTable.hoverRDFdata=async function(that){
+rdfTable.hoverRDFdata = async function(that){
     if(!that.data){
         that.data = await (await fetch(that.href)).text()
     }
     rdfTable.msg(('RDF data:\r----------\r'+that.data).replace('\n','\r'))
 }
 
-rdfTable.msg=function(msg){
+rdfTable.hoverRow = async function(that){
+    if(!that.data){
+        that.data = await (await fetch(that.href)).text()
+    }
+    rdfTable.msg(`<socrata:rowID>${that.textContent}</socrata:rowID>\r------------------------------------------------------\r'${JSON.stringify(JSON.parse(that.data),null,3)}`,'small')
+}
+
+rdfTable.msg=function(msg,fontsize='x-small'){
     let ta = document.getElementById('msgArea')
     ta.style.backgroundColor='black'
     ta.style.color='lime'
-    ta.style.height='33em'
-    ta.style.fontSize='xx-small'
+    ta.style.height='32em'
+    ta.style.fontSize=fontsize
     ta.value=msg
     document.getElementById('msgArea').style.width=`${document.getElementById('valueTable').parentElement.offsetWidth-document.getElementById('prefixList').offsetWidth}px`
 }
