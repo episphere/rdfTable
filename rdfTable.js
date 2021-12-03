@@ -27,6 +27,13 @@ rdfTable.ui = async function(div=rdfTable.div){ // assemble UI
 rdfTable.readRDF = async (url=document.location.search.slice(1))=>{
     let txt = await (await fetch(url)).text()
     rdfTable.url=url
+    rdfTable.rdftxt=txt
+    rdfTable.rdfarr = txt.split(/\n[^\s]/).map(x=>{ // rdf array
+        if(x[0]!='<'){
+            x='<'+x
+        }
+        return x
+    })
     return rdfTable.rdf2json(txt)
 }
 
@@ -120,9 +127,9 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
             let cc = c.match(/:([^:]+)$/)[1]
             if(cc=="rowID"){
                 //h +=`<td><a href="${r+'.json'}" target="_blank" style="color:maroon">[json]</a>: <a href="${r+'.json'}" target="_blank">${rc}</a></td>`
-                h +=`<td><a href="${r+'.json?$$exclude_system_fields=false'}" target="_blank" onmouseover="rdfTable.hoverRow(this)">${rc}</a></td>`
+                h +=`<td><a id="${rc}" href="${r+'.json?$$exclude_system_fields=false'}" target="_blank" onmouseover="rdfTable.hoverRow(this)">${rc}</a></td>`
             }else{
-                h +=`<td class="${rClass} ${cClass}">${rc}</td>`
+                h +=`<td id="${c}" onmouseover="rdfTable.hoverElement(this)" data-element="${encodeURIComponent(JSON.stringify({r:r,c:c,rc:rc}))}" class="${rClass} ${cClass}">${rc}</td>`
             }
         })
         h += '</tr>'
@@ -146,17 +153,31 @@ rdfTable.hoverCSVdata=async function(that){
 }
 
 rdfTable.hoverRDFdata = async function(that){
+    rdfTable.msg((`RDF data:\r${that.href}:\r------------------------------------------------------\r`+rdfTable.rdftxt).replace('\n','\r'))
+    /*
     if(!that.data){
         that.data = await (await fetch(that.href)).text()
     }
     rdfTable.msg((`RDF data:\r${that.href}:\r------------------------------------------------------\r`+that.data).replace('\n','\r'))
+    */
 }
 
 rdfTable.hoverRow = async function(that){
     if(!that.data){
         that.data = await (await fetch(that.href)).text()
     }
-    rdfTable.msg(`<socrata:rowID>${that.textContent}</socrata:rowID>\r------------------------------------------------------\r'${JSON.stringify(JSON.parse(that.data),null,3)}`,'small')
+    rdfTable.msg(`<socrata:rowID>${that.textContent}</socrata:rowID>\r------------------------------------------------------\r${JSON.stringify(JSON.parse(that.data),null,3)}`,'small')
+}
+
+rdfTable.hoverElement=function(that){
+    if(!that.data){
+        let dt = JSON.parse(decodeURIComponent(that.dataset.element))
+        let res = rdfTable.rdfarr.filter(x=>x.match(dt.r))[0].split(/\n/)
+        let h = res[0] // header
+        let b = res.slice(1).filter(x=>x.match(dt.c))[0] //body
+        that.data=res.slice(0,3).concat([b]).join('\n')
+    }   
+    rdfTable.msg(that.data,'medium')
 }
 
 rdfTable.msg=function(msg,fontsize='x-small'){

@@ -25,7 +25,7 @@ URL: <input id=inputURL type=text size=63> <button id="tablulateURL">tabulate</b
         let resourceURL = document.getElementById('inputURL').value.match(/^[^?]+/)[0].replace(/\.rdf$/,'')
         let resourceID = resourceURL.match(/[^\/]+$/)[0]
         document.getElementById('openSource').onclick=()=>{window.open(resourceURL)}
-        let url=`https://data.cdc.gov/api/views/${resourceID}.json`
+        let url=`${location.search.slice(1).match(/^https:\/\/[^/]+/)[0]}/api/views/${resourceID}.json`
         fetch(url).then(x=>x.json()
             .then(x=>{
                 rdfTable.info=x
