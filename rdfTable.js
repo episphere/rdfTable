@@ -61,11 +61,16 @@ rdfTable.rdf2json = txt =>{ // rdf as txt
     txtBody.forEach(l=>{ // for each line
         l=l.replace(/<\/dsbase:[^>]+>$/,'') // clear tail
         if(l[0]!=' '){ //new row
-            let L=l.match(/<dsbase:([^\s]+) rdf:about="([^\s>"]+)/)
+            //let L=l.match(/<dsbase:([^\s]+) rdf:about="([^\s>"]+)/)
+            let L=[]
+            L[0]=l
+            L[2]=l.match(/rdf:about="([^"]+)"/)[1]
+            L[1]=L[2].match(/\/resource\/([^\/]+)/)[1]
             rowID=L[2]
             rdf.rows[rowID]={
                 about:{resourceID:L[1]}
             }
+            //debugger
         }else{
             rowID
             if(l.match(/>/g).length==2){
