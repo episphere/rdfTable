@@ -60,6 +60,8 @@ rdfTable.rdf2json = txt =>{ // rdf as txt
     rdf.rows=[]
     txtBody.forEach(l=>{ // for each line
         l=l.replace(/<\/dsbase:[^>]+>$/,'') // clear tail
+        l=l.replace(/<\/rdf:[^>]+>$/,'') // clear tail
+        //l=l.replace(/<\/[^>]+>$/,'') // clear tail
         if(l[0]!=' '){ //new row
             //let L=l.match(/<dsbase:([^\s]+) rdf:about="([^\s>"]+)/)
             let L=[]
@@ -79,7 +81,9 @@ rdfTable.rdf2json = txt =>{ // rdf as txt
                 rdf.rows[rowID][L[1]]=L[2]
                 //rdf.rows[rowID][L[1]]=L[2]
             }else{
-                l=l.replace(/<\/dsbase:[^>]+>$/,'')
+                //l=l.replace(/<\/dsbase:[^>]+>$/,'')
+                console.log(l)
+                l=l.replace(/<\/[^>]+>$/,'')
                 let L = l.match(/^\s+<([\S]+)\s([^>]+)/)
                 //debugger
                 L[2]=L[2].replace(/\/$/,'')
