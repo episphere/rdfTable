@@ -6,12 +6,13 @@
 <body class="container">
 <h1>rdf<span style="font-size:xxx-large">T</span>able <span style="font-size:large;color:navy">[<a href="https://github.com/episphere/rdfTable" target="_blank">code</a>]</span></h1>
 <hr><p style="color:maroon">
-Assembling RDF content from <a href="https://dev.socrata.com" target="_blank">SOCRATA</a> data platform as a <b>FAIR linked table</b>.
+Assembling RDF content from <a href="https://dev.socrata.com" target="_blank">SOCRATA</a> data platform as a <b style="color:darkred">FAIR linked table</b>.
 Please provide the URL of the remote data as a link appended 
-to the url of this page, as in <a href="?https://data.cdc.gov/resource/muzy-jte6.rdf?$limit=10&mmwryear=2021">this demo</a>,
+to the url of this page, as in <a href="?https://data.cdc.gov/resource/muzy-jte6.rdf?$limit=10&mmwryear=2021" style="font-weight: bold;color:#cc0099">this first demo</a>,
 which will retrieve the first 10 weeks of mortality data in 2021 (including COVID) from <a href="https://data.cdc.gov" target="_blank">CDC</a>.
-A <a href="?https://health.data.ny.gov/resource/22g3-z7e7.rdf?hospital_county=Manhattan&ccs_diagnosis_description=Cancer%20of%20breast&age_group=18%20to%2029">second demo example</a> looks at women under 30 years of age treated for Breast Cancer in 2017 in any care facility in Manhatan, by pulling data directly from New York state Department of Health.
-The URL for data sources can also be provided manualy in the input box below.
+To illustrate the granularity of operating the API that returns RDF data, a <a href="?https://health.data.ny.gov/resource/22g3-z7e7.rdf?hospital_county=Manhattan&ccs_diagnosis_description=Cancer%20of%20breast&age_group=18%20to%2029" style="font-weight: bold;color:#cc0099">second example</a> looks for hospital discharge reports on women under 30 years of age treated for Breast Cancer (rare in that age group) in 2017 in any care facility in Manhatan, by pulling data directly from New York state Department of Health. 
+A <a href="?https://www.dallasopendata.com/resource/9fxf-t2tr.rdf" style="font-weight: bold;color:#cc0099">third example</a> retrieves up-to-the-minute data on active police calls in the city of Dallas, Texas. Each of the three examples operates a distinct API managed by a distinct organization, at three very different time scales (years, weeks, minutes), and with varying levels of metadata completeness.
+The URL for other data sources can also be provided manualy in the input box below. The first two examples engage real-time health data applications detailed, respectively, in <a href="https://pubmed.ncbi.nlm.nih.gov/30671301" target="_blank">PeerJ 2019 7:e6230</a> and <a href="https://pubmed.ncbi.nlm.nih.gov/33135727" target="_blank">Bioinformatics 2021 37(14)</a>.  
 </p>
 <p id="resourceInfo"></p>
 <p id="URLbuttons">

@@ -121,7 +121,7 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
             cc='*'
             h += `<th><a onmouseover="rdfTable.msgJSON()" href="${u+'?'+rdfTable.url.replace(/[&$]*select=[^&]*/g,'')}&$select=${cc}">${c}</a></th>`
         }else{
-            h += `<th><a href="${u+'?'+rdfTable.url.replace(/[&$]*select=[^&]*/g,'')}&$select=${cc}">${c}</a></th>`
+            h += `<th><a onmouseover="rdfTable.colJSON(this)" href="${u+'?'+rdfTable.url.replace(/[&$]*select=[^&]*/g,'')}&$select=${cc}">${c}</a></th>`
         }
         
     })
@@ -186,7 +186,7 @@ rdfTable.hoverElement=function(that){
         let b = res.slice(1).filter(x=>x.match(dt.c))[0] //body
         that.data=res.slice(0,3).concat([b]).join('\n')
     }   
-    rdfTable.msg(that.data,'medium')
+    rdfTable.msg(`\r${that.data.replace(/\n/,'\r\r\r').replace(/\n/g,'\r\r')}`,'medium')
 }
 
 rdfTable.msg=function(msg,fontsize='x-small'){
@@ -210,6 +210,11 @@ rdfTable.msgJSON=()=>{
         J.rows=R
     }
     rdfTable.msg(`JSON table assembled from RDF:\r----------------------------------------\r${JSON.stringify(J,null,3)}`)
+}
+
+rdfTable.colJSON = function(that){
+    let dt = rdfTable.info.columns.filter(x=>x.fieldName==that.textContent)[0]
+    rdfTable.msg(`Parameter "${that.textContent}":\rName: ${dt.name}\rDescription: ${dt.description} (${dt.renderTypeName})\r----------------------------------------\r`+JSON.stringify(dt,null,3),"medium")
 }
 
 rdfTable()
