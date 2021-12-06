@@ -189,6 +189,12 @@ rdfTable.hoverElement=function(that){
     rdfTable.msg(`\r${that.data.replace(/\n/,'\r\r\r').replace(/\n/g,'\r\r')}`,'medium')
 }
 
+rdfTable.colJSON = function(that){
+    let dt = rdfTable.info.columns.filter(x=>x.fieldName==that.textContent)[0]
+    rdfTable.msg(`Parameter "${that.textContent}":\rName: ${dt.name}\rDescription: ${dt.description} (${dt.renderTypeName})\r----------------------------------------\r`+JSON.stringify(dt,null,3),"medium")
+}
+
+
 rdfTable.msg=function(msg,fontsize='x-small'){
     let ta = document.getElementById('msgArea')
     ta.style.backgroundColor='black'
@@ -210,11 +216,6 @@ rdfTable.msgJSON=()=>{
         J.rows=R
     }
     rdfTable.msg(`JSON table assembled from RDF:\r----------------------------------------\r${JSON.stringify(J,null,3)}`)
-}
-
-rdfTable.colJSON = function(that){
-    let dt = rdfTable.info.columns.filter(x=>x.fieldName==that.textContent)[0]
-    rdfTable.msg(`Parameter "${that.textContent}":\rName: ${dt.name}\rDescription: ${dt.description} (${dt.renderTypeName})\r----------------------------------------\r`+JSON.stringify(dt,null,3),"medium")
 }
 
 rdfTable()
