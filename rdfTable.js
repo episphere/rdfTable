@@ -108,7 +108,7 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
     rdfTable.cols=rdfTable.cols.filter(x=>x!="rdfs:member")
     let h = `<hr><p style="font-size:small">${Date()}</p>`
     h += `<p>Compare conventional <a id="csvData" href="${rdfTable.url.replace('.rdf','.csv')}" target="_blank" onmouseover="rdfTable.hoverCSVdata(this)">CSV data</a> from the same source with the linked table assembled below (shaded area) from the corresponding <a href="${rdfTable.url}" target="_blank" onmouseover="rdfTable.hoverRDFdata(this)">RDF data</a>. Note base address of mapped namespaces at the end.</p>`
-    h += `<p style="font-size:small"><b>URL</b>: <a href="${rdfTable.url}" target="_blank">${rdfTable.url}</a> <button onclick="rdfTable.copyTable(this)">copy table</button></p>`
+    h += `<p style="font-size:small"><b>Data URL</b>: <a href="${rdfTable.url}" target="_blank">${rdfTable.url}</a> <button onclick="rdfTable.copyTable(this)">copy table</button> <button onclick="rdfTable.copyTableAsURL(this)">live table as URL</button></p>`
     h += '<div style="overflow-x:auto;overflow-y:auto;max-height:400px">'
     h += '<table style="font-size:small;background-color:azure" id="valueTable">'
     // header
@@ -197,6 +197,10 @@ rdfTable.colJSON = function(that){
 rdfTable.copyTable = async function(that){
     await navigator.clipboard.writeText(document.getElementById('valueTable').parentElement.innerHTML)
     ///navigator.clipboard.read().then(console.log)
+}
+
+rdfTable.copyTableAsURL = async function(that){
+    await navigator.clipboard.writeText(location.href)
 }
 
 rdfTable.msg=function(msg,fontsize='x-small'){
