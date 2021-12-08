@@ -138,7 +138,7 @@ rdfTable.tabulate=function(div=document.getElementById("rdfTableDiv")){
                 //h +=`<td><a href="${r+'.json'}" target="_blank" style="color:maroon">[json]</a>: <a href="${r+'.json'}" target="_blank">${rc}</a></td>`
                 h +=`<td><a id="${rc}" href="${r+'.json?$$exclude_system_fields=false'}" target="_blank" onmouseover="rdfTable.hoverRow(this)">${rc}</a></td>`
             }else{
-                h +=`<td id="${c}" onmouseover="rdfTable.hoverElement(this)" data-element="${encodeURIComponent(JSON.stringify({r:r,c:c,rc:rc}))}" class="${rClass} ${cClass}">${rc}</td>`
+                h +=`<td id="${c}" onmouseover="rdfTable.hoverElement(this)" onclick="rdfTable.clickElement(this)" data-element="${encodeURIComponent(JSON.stringify({r:r,c:c,rc:rc}))}" class="${rClass} ${cClass}">${rc}</td>`
             }
         })
         h += '</tr>'
@@ -178,15 +178,23 @@ rdfTable.hoverRow = async function(that){
     rdfTable.msg(`<socrata:rowID>${that.textContent}</socrata:rowID>\r------------------------------------------------------\r${JSON.stringify(JSON.parse(that.data),null,3)}`,'small')
 }
 
+rdfTable.hover=true
+rdfTable.clickElement=function(that){
+    rdfTable.hover=!rdfTable.hover
+    rdfTable.hoverElement(that)
+}
+
 rdfTable.hoverElement=function(that){
-    if(!that.data){
-        let dt = JSON.parse(decodeURIComponent(that.dataset.element))
-        let res = rdfTable.rdfarr.filter(x=>x.match(dt.r))[0].split(/\n/)
-        let h = res[0] // header
-        let b = res.slice(1).filter(x=>x.match(dt.c))[0] //body
-        that.data=res.slice(0,3).concat([b]).join('\n')
-    }   
-    rdfTable.msg(`\r${that.data.replace(/\n/,'\r\r\r').replace(/\n/g,'\r\r')}`,'medium')
+    if(rdfTable.hover){
+        if(!that.data){
+            let dt = JSON.parse(decodeURIComponent(that.dataset.element))
+            let res = rdfTable.rdfarr.filter(x=>x.match(dt.r))[0].split(/\n/)
+            let h = res[0] // header
+            let b = res.slice(1).filter(x=>x.match(dt.c))[0] //body
+            that.data=res.slice(0,3).concat([b]).join('\n')
+        }   
+        rdfTable.msg(`\r${that.data.replace(/\n/,'\r\r\r').replace(/\n/g,'\r\r')}`,'medium')
+    }      
 }
 
 rdfTable.colJSON = function(that){
